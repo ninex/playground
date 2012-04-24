@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Event Tickets</h1>
+<div id="TicketSummary">
+    <div data-bind="text:Available, css:{ ImportantMessage: StockIsLow }" class="TicketCount"></div>
+    <div class="Hidden ImportantMessage" data-bind="css: { Hidden: !StockIsLow() }">
+        Event is almost sold out!</div>
+    <button data-bind="click: BuyTicket, enable: CanBuyTicket">Buy a Ticket</button>
+</div>
+<script type="text/javascript" src="/signalr/hubs"></script>
+<script type="text/javascript">
+    var ticketDataViewModel = {
+        Available: ko.observable(),
+        BuyTicket: function () { tickets.buyTicket(); }
+    };
+
+    ticketDataViewModel.StockIsLow = ko.dependentObservable(function () {
+        return this.Available() < 5 && this.Available() > 0;
+    }, ticketDataViewModel);
+
+    ticketDataViewModel.CanBuyTicket = ko.dependentObservable(function () {
+        return this.Available() > 0;
+    }, ticketDataViewModel);
+
+    ko.applyBindings(ticketDataViewModel, $("#TicketSummary")[0]);
+
+    var tickets;
+    $(function () {
+        tickets = $.connection.ticketHub;
+        tickets.updateTicketCount = function (data) { ticketDataViewModel.Available(data); };
+        $.connection.hub.start(function () { tickets.getTicketCount(); });
+    });
+</script>
