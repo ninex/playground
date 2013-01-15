@@ -3,10 +3,13 @@
     ViewBag.Title = "Index";
 }
 <h2>
-    Index</h2>
-<table>
-    <thead>
+    Momentum list for @DateTime.Now.Date.ToShortDateString()</h2>
+<table style="width:100%;">
+    <thead style="font-weight:bold;">
         <tr>
+            <td>
+                Company
+            </td>
             <td>
                 Ticker
             </td>
@@ -30,17 +33,59 @@
     @foreach (var quarter in Model)
     { 
         <tr>
+            <td>@quarter.FullName
+            </td>
             <td>@quarter.Ticker
             </td>
-            <td>@quarter.Quarter1Move.ToString("0.00")
+            <td>
+                @if (quarter.Quarter1Top5)
+                {
+                    <b>@quarter.Quarter1Move.ToString("0.00")</b>
+                }
+                else
+                { 
+                    @quarter.Quarter1Move.ToString("0.00")
+                }
             </td>
-            <td>@quarter.Quarter2Move.ToString("0.00")
+            <td>
+                @if (quarter.Quarter2Top5)
+                {
+                    <b>@quarter.Quarter2Move.ToString("0.00")</b>
+                }
+                else
+                { 
+                    @quarter.Quarter2Move.ToString("0.00")
+                }
             </td>
-            <td>@quarter.Quarter3Move.ToString("0.00")
+            <td>
+                @if (quarter.Quarter3Top5)
+                {
+                    <b>@quarter.Quarter3Move.ToString("0.00")</b>
+                }
+                else
+                { 
+                    @quarter.Quarter3Move.ToString("0.00")
+                }
             </td>
-            <td>@quarter.Quarter4Move.ToString("0.00")
+            <td>
+                @if (quarter.Quarter4Top5)
+                {
+                    <b>@quarter.Quarter4Move.ToString("0.00")</b>
+                }
+                else
+                { 
+                    @quarter.Quarter4Move.ToString("0.00")
+                }
             </td>
-            <td>@quarter.YearMove.ToString("0.00")
+            <td>
+                @if (quarter.YearTop5)
+                {
+                    <b>@quarter.YearMove.ToString("0.00")</b>
+                }
+                else
+                { 
+                    @quarter.YearMove.ToString("0.00")
+                }
             </td>
         </tr>
     }
