@@ -1,0 +1,47 @@
+﻿@model System.Collections.Generic.List<MomentumWeb.Models.StockQuarter>
+@{
+    ViewBag.Title = "Index";
+}
+<h2>
+    Index</h2>
+<table>
+    <thead>
+        <tr>
+            <td>
+                Ticker
+            </td>
+            <td>
+                Qtr 1
+            </td>
+            <td>
+                Qtr 2
+            </td>
+            <td>
+                Qtr 3
+            </td>
+            <td>
+                Qtr 4
+            </td>
+            <td>
+                Year
+            </td>
+        </tr>
+    </thead>
+    @foreach (var quarter in Model)
+    { 
+        <tr>
+            <td>@quarter.Ticker
+            </td>
+            <td>@quarter.Quarter1Move.ToString("0.00")
+            </td>
+            <td>@quarter.Quarter2Move.ToString("0.00")
+            </td>
+            <td>@quarter.Quarter3Move.ToString("0.00")
+            </td>
+            <td>@quarter.Quarter4Move.ToString("0.00")
+            </td>
+            <td>@quarter.YearMove.ToString("0.00")
+            </td>
+        </tr>
+    }
+</table>
