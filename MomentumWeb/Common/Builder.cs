@@ -23,36 +23,40 @@ namespace MomentumWeb.Common
                 foreach (var entry in tickers)
                 {
                     var last = ctx.StockDays.Where(p => p.Ticker == entry).OrderByDescending(p => p.DateStamp).FirstOrDefault();
-                    if (last == null || last.DateStamp.Date < DateTime.Now.AddDays(-1).Date)
+                    if (last == null || last.DateStamp.Date < DateTime.Now.AddDays(-3).Date)
                     {
                         using (WebClient wc = new WebClient())
                         {
                             wc.Proxy = new System.Net.WebProxy("ntswhoproxy01:8080");
                             wc.Proxy.Credentials = new System.Net.NetworkCredential(@"woolworths\w7052442", "!Jan2013");
-                            var data = wc.DownloadString(string.Format(Fin24Link, entry, 1));
-                            var quote = JsonConvert.DeserializeObject<StockQuote>(data);
-                            if (quote != null && quote.Result == 1)
+                            try
                             {
-                                foreach (var item in quote.Object)
+                                var data = wc.DownloadString(string.Format(Fin24Link, entry, 1));
+                                var quote = JsonConvert.DeserializeObject<StockQuote>(data);
+                                if (quote != null && quote.Result == 1)
                                 {
-                                    if (item.DateStamp.Date <= DateTime.Now.AddDays(-1).Date && ctx.StockDays.Count(p => p.Ticker == item.InstrumentIdentifier && p.DateStamp.Year == item.DateStamp.Year && p.DateStamp.Month == item.DateStamp.Month && p.DateStamp.Day == item.DateStamp.Day) == 0)
+                                    foreach (var item in quote.Object)
                                     {
-                                        var newEntry = new MomentumData.StockDay();
+                                        if (item.DateStamp.Date <= DateTime.Now.AddDays(-1).Date && ctx.StockDays.Count(p => p.Ticker == item.InstrumentIdentifier && p.DateStamp.Year == item.DateStamp.Year && p.DateStamp.Month == item.DateStamp.Month && p.DateStamp.Day == item.DateStamp.Day) == 0)
+                                        {
+                                            var newEntry = new MomentumData.StockDay();
 
-                                        newEntry.Close = item.Close;
-                                        newEntry.DateStamp = item.DateStamp;
-                                        newEntry.High = item.High;
-                                        newEntry.Low = item.Low;
-                                        newEntry.Name = item.InstrumentName;
-                                        newEntry.Open = item.Open;
-                                        newEntry.Ticker = item.InstrumentIdentifier;
-                                        newEntry.Volume = item.Volume;
+                                            newEntry.Close = item.Close;
+                                            newEntry.DateStamp = item.DateStamp;
+                                            newEntry.High = item.High;
+                                            newEntry.Low = item.Low;
+                                            newEntry.Name = item.InstrumentName;
+                                            newEntry.Open = item.Open;
+                                            newEntry.Ticker = item.InstrumentIdentifier;
+                                            newEntry.Volume = item.Volume;
 
-                                        ctx.StockDays.AddObject(newEntry);
+                                            ctx.StockDays.AddObject(newEntry);
+                                        }
                                     }
+                                    ctx.SaveChanges();
                                 }
-                                ctx.SaveChanges();
                             }
+                            catch { }
                         }
                     }
                 }
