@@ -15,10 +15,10 @@ namespace MomentumWeb.Controllers
         //
         // GET: /Home/
 
-        public ActionResult Index()
+        public ActionResult Index(int? id)
         {
             Common.Builder.Build();
-            var quarters = Common.Builder.GetStocks();
+            var quarters = Common.Builder.GetStocks(id.HasValue ? id.Value : 1);
 
             foreach (var entry in quarters.OrderByDescending(p => p.Quarter1Move).Take(5))
             {
@@ -40,10 +40,21 @@ namespace MomentumWeb.Controllers
                 entry.Quarter4Top5 = true;
             }
 
+            foreach (var entry in quarters.OrderByDescending(p => p.Half1Move).Take(5))
+            {
+                entry.Half1Top5 = true;
+            }
+            foreach (var entry in quarters.OrderByDescending(p => p.Half2Move).Take(5))
+            {
+                entry.Half2Top5 = true;
+            }
+
             foreach (var entry in quarters.OrderByDescending(p => p.YearMove).Take(5))
             {
                 entry.YearTop5 = true;
             }
+
+            ViewBag.MinVol = id.HasValue ? id.Value : 1;
 
             return View(quarters);
         }

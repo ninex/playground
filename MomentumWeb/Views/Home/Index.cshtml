@@ -2,10 +2,21 @@
 @{
     ViewBag.Title = "Index";
 }
+<style>
+.a thead td{
+    border-bottom:1px solid #333;
+    font-weight:bold;
+}
+.a td{
+    padding-left:30px;
+}
+</style>
+
 <h2>
     Momentum list for @DateTime.Now.Date.ToShortDateString()</h2>
-<table style="width:60%;">
-    <thead style="font-weight:bold;">
+    <h3>Minimum volume of @ViewBag.MinVol</h3>
+<table class="a">
+    <thead>
         <tr>
             <td>
                 Company
@@ -26,7 +37,16 @@
                 Qtr 4
             </td>
             <td>
+                Half 1
+            </td>
+            <td>
+                Half 2
+            </td>
+            <td>
                 Year
+            </td>
+            <td>
+                Avg Volume/day
             </td>
         </tr>
     </thead>
@@ -78,6 +98,26 @@
                 }
             </td>
             <td>
+                @if (quarter.Half1Top5)
+                {
+                    <b>@quarter.Half1Move.ToString("0.00")</b>
+                }
+                else
+                { 
+                    @quarter.Half1Move.ToString("0.00")
+                }
+            </td>
+            <td>
+                @if (quarter.Half2Top5)
+                {
+                    <b>@quarter.Half2Move.ToString("0.00")</b>
+                }
+                else
+                { 
+                    @quarter.Half2Move.ToString("0.00")
+                }
+            </td>
+            <td>
                 @if (quarter.YearTop5)
                 {
                     <b>@quarter.YearMove.ToString("0.00")</b>
@@ -86,6 +126,8 @@
                 { 
                     @quarter.YearMove.ToString("0.00")
                 }
+            </td>
+            <td>@quarter.AverageVolumeTraded.ToString("0.00")
             </td>
         </tr>
     }

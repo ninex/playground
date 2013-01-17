@@ -63,7 +63,7 @@ namespace MomentumWeb.Common
             }
         }
 
-        public static List<StockQuarter> GetStocks()
+        public static List<StockQuarter> GetStocks(int minVol)
         {
             var quarters = new List<StockQuarter>();
 
@@ -79,11 +79,18 @@ namespace MomentumWeb.Common
                     var qtr4 = quotes.Where(p => p.DateStamp.Date >= DateTime.Now.AddDays(-7).Date && p.DateStamp.Date < DateTime.Now.AddDays(-1).Date).OrderByDescending(p => p.DateStamp).FirstOrDefault();
                     if (qtr0 != null && qtr1 != null && qtr2 != null && qtr3 != null && qtr4 != null)
                     {
+                        double volume = 0;
+                        foreach (var day in quotes)
+                        {
+                            volume += ((double)day.Volume) / quotes.Count();
+                        }
+
                         var full = ctx.StockDays.First(p => p.Ticker == ticker).Name;
                         var quarter = new StockQuarter()
                         {
                             Ticker = ticker,
                             FullName = full,
+                            AverageVolumeTraded = volume,
                             Quarter1 = qtr1.Close,
                             Quarter1Move = (qtr1.Close - qtr0.Close) / qtr0.Close * 100,
                             Quarter2 = qtr2.Close,
@@ -92,11 +99,15 @@ namespace MomentumWeb.Common
                             Quarter3Move = (qtr3.Close - qtr2.Close) / qtr2.Close * 100,
                             Quarter4 = qtr4.Close,
                             Quarter4Move = (qtr4.Close - qtr3.Close) / qtr3.Close * 100,
+                            Half1Move = (qtr2.Close - qtr0.Close) / qtr0.Close * 100,
+                            Half2Move = (qtr4.Close - qtr2.Close) / qtr2.Close * 100,
                             YearMove = (qtr4.Close - qtr0.Close) / qtr0.Close * 100,
                             Quarter1Top5 = false,
                             Quarter2Top5 = false,
                             Quarter3Top5 = false,
                             Quarter4Top5 = false,
+                            Half1Top5 = false,
+                            Half2Top5 = false,
                             YearTop5 = false
                         };
                         quarters.Add(quarter);
@@ -104,7 +115,7 @@ namespace MomentumWeb.Common
                 }
             }
 
-            return quarters;
+            return quarters.Where(p => p.AverageVolumeTraded > minVol).ToList();
         }
 
         private static List<string> GetTickers()

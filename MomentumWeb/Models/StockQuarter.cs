@@ -9,6 +9,7 @@ namespace MomentumWeb.Models
     {
         public string Ticker { get; set; }
         public string FullName { get; set; }
+        public double AverageVolumeTraded { get; set; }
 
         public double Quarter1 { get; set; }
         public double Quarter1Move { get; set; }
@@ -22,12 +23,17 @@ namespace MomentumWeb.Models
         public double Quarter4 { get; set; }
         public double Quarter4Move { get; set; }
 
+        public double Half1Move { get; set; }
+        public double Half2Move { get; set; }
+
         public double YearMove { get; set; }
 
         public bool Quarter1Top5 { get; set; }
         public bool Quarter2Top5 { get; set; }
         public bool Quarter3Top5 { get; set; }
         public bool Quarter4Top5 { get; set; }
+        public bool Half1Top5 { get; set; }
+        public bool Half2Top5 { get; set; }
         public bool YearTop5 { get; set; }
     }
 }
